@@ -1,0 +1,90 @@
+
+c chung (www.simpleavr.com)
+
+* adjust makefile based on your toolchain setup
+
+May 2013
+
+. clean-up
+. code exceed 2k now w/ newer mspgcc and CCS, i made the following changes
+. alter some macros for newer compilers
+. "borrow" infomem b,c,d to put some of my constants to free up code flash
+  be sure to include "--section-start=.infomembcd=0x01040" when linking
+. works for mspgcc as we are just over 76 bytes
+. failed for CCS as we need almost 300 bytes (infomem has only 64x3 usable bytes)
+. compiled under cygwin and ubuntu / mint
+. get this into github
+
+Nov 2010
+
+code provided as is, no warranty
+
+you cannot use code for commercial purpose w/o my permission
+nice if you give credit, mention my site if you adopt much of my code
+
+test build under linux ubuntu 10.04 w/ msp430-gcc and flash w/ msgdebug
+not test under windows CCS or IAR
+
+
+     MSP430G2211 or similar
+   ----------------- 
+  |                 |
+  |                 |                  PCF8563      /|\
+  |                 |              ---------------   |
+  |                 |             |          Vcc 8|---
+  |                 | /---------->|5 SDA          |  
+  |                 | | /---------|6 SCL         1|--|[]|--.
+  |                 | | | /-------|3 Int          |  Xtal  |
+  |                 | | | |       |              2|________.
+  |                 | | | |       |          Gnd 4|---
+  |                 | | | |        ---------------   |
+  |                 | | | |                         ---
+  |                 | | | |    4 x 7 segment module ///
+  |                 | | | |   ------------------------
+  |           A P2.7|-+-+-+->|    __a_                |
+  |           B P1.6|-+-+-+->|   |    |b              |
+  |           C P1.3|-+-+-+->|  f|    |               |
+  |           D P1.1|-+-o-+->|   |__g_|  ....  . .... |
+  |           E P1.0|-o---+->|   |    |c              |
+  |    Digit0+F P2.6|-o---+->|  e|    |               |
+  |           G P1.4|-+---+->|   |__d_ o.             |
+  |    Digit1+. P1.2|-+-o-+->|                        |
+  |                 | | | |   ------------------------  /|\
+  |                 | | | |      ^   ^   ^   ^      _o_  |
+  |            Reset|-o-+-+------+---+---+---+------o o---
+  |                 |   \-+----------/   |   |            
+  |    Digit2   P1.7|-----o--------------/   |
+  |    Digit3   P1.5|------------------------/
+   -----------------
+                                     
+   * google "PCF8563 backup battery" for image if u need one
+
+    ___a__
+   |      |        (0) A  F (1)(2) B 
+  f|      | b      -+--+--+--+--+--+ 
+    ___g__        |                 |
+  e|      | c     |Pin1             |
+   |      |        -+--+--+--+--+--+ 
+    ___d__          E  D  .  C  G (3)
+
+
+features
+
+. 8 parts on a mini breadboard
+. battery operated from 3V
+. use of rtc chip and 32Khz crystal for time keeping
+. as accurate as any crystal driven clock
+. lpm4 deep sleep mode when not displaying
+. display of hour/min, seconds, date/day of week
+. one alarm
+. alarm triggered by rtc chip during clock sleep
+
+application notes
+
+. single button press toggles thru hours + minutes, seconds, date + day of week, alarm time and sleep modes
+. long press enters setup mode, subsequent long press rotates thru menu
+. unlike 3p4w, long press enter setup for the current mode. i.e. long press when displaying hour + minute will allow you setup the current time. likewise if you want to setup the alarm, you should first short press to change mode for alarm display, and then long press to enter and setup the alarm.
+. choice of 12H or 24H display
+. long press when displaying seconds allows for cycling possible led dimming values (4 levels)
+. led segment multiplexing includes time delays to compensate for brightness differences for individual digits. ie. when dislaying a digit '8' we stay longer than displaying a digit '1' to compensate for the loss of brightness when driving multiple segments.
+
